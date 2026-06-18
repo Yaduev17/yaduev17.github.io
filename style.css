@@ -1,3 +1,4 @@
+/* ===== ARCHITECTURAL GLOBAL BASE ===== */
 *{margin:0;padding:0;box-sizing:border-box;scroll-behavior:smooth;}
 html,body{overflow-x:hidden;}
 body{font-family:'Poppins',sans-serif;background:#080808;color:white;}
@@ -14,7 +15,7 @@ section{padding:80px 0;}
 a{text-decoration:none;color:white;}
 .red{color:#ff1e1e;}
 
-/* ===== LOADING SCREEN UI ===== */
+/* ===== LOGO LOADING UI ===== */
 #loader-wrapper {
   position: fixed;
   top: 0;
@@ -45,6 +46,87 @@ a{text-decoration:none;color:white;}
 @keyframes pulseLogo {
   0%, 100% { transform: scale(0.95); opacity: 0.6; }
   50% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 15px rgba(255,30,30,0.6)); }
+}
+/* ===== ADVANCED MAX-MOTION & SCROLL-UP ENGINE ===== */
+
+/* 1. Standard Smooth Rise */
+.reveal {
+  opacity: 0;
+  transform: translateY(60px);
+  filter: blur(4px);
+  transition: all 0.9s cubic-bezier(0.215, 0.610, 0.355, 1);
+}
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* 2. Left Slide-In (Great for alternate cards/images) */
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-80px) rotate(-1deg);
+  transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.reveal-left.active {
+  opacity: 1;
+  transform: translateX(0) rotate(0);
+}
+
+/* 3. Right Slide-In (Complements Left Slide-In) */
+.reveal-right {
+  opacity: 0;
+  transform: translateX(80px) rotate(1deg);
+  transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.reveal-right.active {
+  opacity: 1;
+  transform: translateX(0) rotate(0);
+}
+
+/* 4. Cinematic Pop/Scale (Perfect for Hero Images and Service Cards) */
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.85) translateY(30px);
+  filter: saturate(0.2);
+  transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bounce Easing */
+}
+.reveal-scale.active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  filter: saturate(1);
+}
+
+/* 5. 3D Matrix Skew (For an aggressive, hyper-modern cyber aesthetic) */
+.reveal-skew {
+  opacity: 0;
+  transform: perspective(1000px) rotateX(15deg) translateY(50px);
+  transition: all 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-skew.active {
+  opacity: 1;
+  transform: perspective(1000px) rotateX(0deg) translateY(0);
+}
+
+/* Dynamic Stagger Delays for Grids */
+.reveal-delay-1 { transition-delay: 0.15s; }
+.reveal-delay-2 { transition-delay: 0.3s; }
+.reveal-delay-3 { transition-delay: 0.45s; }
+
+/* Interactive Hover States (Amplifies the scroll motion when hovered) */
+.service-card, .skills-card, .specialty-card, .edu-card {
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+.service-card:hover, .skills-card:hover {
+  transform: translateY(-8px) scale(1.03) !important;
+  border-color: #ff1e1e !important;
+  box-shadow: 0 15px 35px rgba(255, 30, 30, 0.15) !important;
+}
+.hero-image img {
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.hero-image img:hover {
+  transform: scale(1.04) rotate(1deg);
 }
 
 /* ===== NAVBAR ===== */
@@ -77,7 +159,7 @@ nav ul li a:hover{color:white;}
 .btn{padding:12px 24px;border-radius:10px;transition:0.3s;display:inline-block;font-size:14px;font-weight:500;}
 .primary-btn{background:#ff1e1e;}
 .secondary-btn{border:1px solid #ff1e1e;}
-.btn:hover{transform:translateY(-3px);box-shadow:0 0 20px rgba(255,0,0,0.3); color: white;}
+.btn:hover{transform:translateY(-3px);box-shadow:0 0 20px rgba(255,0,0,0.3); color:white;}
 .socials{display:flex;gap:10px;}
 .socials a{width:40px;height:40px;border:1px solid rgba(255,255,255,0.1);display:flex;justify-content:center;align-items:center;border-radius:10px;transition:0.3s;font-size:15px;}
 .socials a:hover{border-color:#ff1e1e;color:#ff1e1e;transform:translateY(-3px);}
@@ -211,7 +293,7 @@ footer p{color:#555;font-size:13px;}
 ::-webkit-scrollbar-track{background:#060606;}
 ::-webkit-scrollbar-thumb{background:#ff1e1e;border-radius:20px;}
 
-/* ===== RESPONSIVE MEDIA QUERIES ===== */
+/* ===== RESPONSIVE MEDIA BREAKPOINTS ===== */
 @media(max-width:1100px){
   .hero{flex-direction:column-reverse;text-align:center;gap:45px;padding-top:140px;min-height:auto;}
   .hero-text p{margin: 0 auto 28px auto;}
@@ -227,7 +309,7 @@ footer p{color:#555;font-size:13px;}
 @media(max-width:768px){
   section{padding:60px 0;}
   
-  /* Navigation overhauls for Mobile Layouts */
+  /* UI adjustments for smaller screens */
   .menu-toggle{display:block;}
   .hidden-mobile {display:none;}
   
