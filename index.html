@@ -31,11 +31,14 @@
   <link rel="sitemap" type="application/xml" href="https://yaduev.online/sitemap.xml">
   <meta name="theme-color" content="#ff1e1e">
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+  <div class="cursor-dot" id="cursor-dot"></div>
+  <div class="cursor-ring" id="cursor-ring"></div>
 
   <div id="loader-wrapper">
     <div class="loader-logo">YK<span>.</span></div>
@@ -61,10 +64,11 @@
   </nav>
 
   <section class="hero container reveal">
+    <canvas id="network-canvas"></canvas>
     <div class="hero-text">
       <h4>Hey There, I'm</h4>
       <h1>YADU</h1>
-      <h3>Network Security Engineer | Cybersecurity Specialist</h3>
+      <h3 id="role-text">Network Security Engineer</h3>
       <p>Passionate Network Security Engineer specializing in cybersecurity, firewall configuration, VPN deployment, VoIP systems, server management, and enterprise networking.</p>
       <div class="hero-buttons">
         <a href="mailto:yaduev17@gmail.com" class="btn primary-btn">Contact Me</a>
@@ -79,6 +83,10 @@
     </div>
     <div class="hero-image">
       <img src="yadu_1.jpeg" alt="Yadu">
+      <span class="corner corner-tl"></span>
+      <span class="corner corner-tr"></span>
+      <span class="corner corner-bl"></span>
+      <span class="corner corner-br"></span>
     </div>
   </section>
 
@@ -350,8 +358,8 @@
             <div class="contact-info-icon"><i class="fas fa-phone"></i></div>
             <div>
               <p class="contact-info-label">Phone</p>
-              <p class="contact-info-value">+91 8281700662</p>
-            </div>
+              <p class="contact-info-value">+91 8281 700 662</p>
+            </div> 
           </div>
           <div class="contact-info-card">
             <div class="contact-info-icon"><i class="fas fa-envelope"></i></div>
@@ -456,5 +464,204 @@
 
     function sendMessage() {
       alert("Message logic processed successfully!");
+    }
+
+    // ============================================================
+    // 4. AESTHETIC ENGINE — network canvas, cursor, tilt, typing, bars
+    // ============================================================
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    const enableHeavyFX = !prefersReducedMotion && !isCoarsePointer;
+
+    // --- 4a. Custom cursor ---
+    if (enableHeavyFX) {
+      document.body.classList.add('custom-cursor-active');
+      const cursorDot = document.getElementById('cursor-dot');
+      const cursorRing = document.getElementById('cursor-ring');
+      let mx = 0, my = 0, rx = 0, ry = 0;
+      window.addEventListener('mousemove', (e) => {
+        mx = e.clientX; my = e.clientY;
+        cursorDot.style.left = mx + 'px';
+        cursorDot.style.top = my + 'px';
+      });
+      (function animateRing() {
+        rx += (mx - rx) * 0.18;
+        ry += (my - ry) * 0.18;
+        cursorRing.style.left = rx + 'px';
+        cursorRing.style.top = ry + 'px';
+        requestAnimationFrame(animateRing);
+      })();
+      document.querySelectorAll('a, button, .tag, .service-card, .skills-card, .specialty-card, .edu-card, .exp-card, .contact-info-card').forEach(el => {
+        el.addEventListener('mouseenter', () => cursorRing.classList.add('cursor-hover'));
+        el.addEventListener('mouseleave', () => cursorRing.classList.remove('cursor-hover'));
+      });
+    }
+
+    // --- 4b. Typing effect for the hero role line ---
+    const roleEl = document.getElementById('role-text');
+    if (roleEl) {
+      if (prefersReducedMotion) {
+        roleEl.textContent = 'Network Security Engineer | Cybersecurity Specialist';
+      } else {
+        const roles = ['Network Security Engineer', 'Cybersecurity Specialist', 'FortiGate & VPN Expert'];
+        roleEl.innerHTML = '<span id="role-text-content"></span><span class="typing-cursor"></span>';
+        const contentEl = document.getElementById('role-text-content');
+        let roleIndex = 0, charIndex = 0, deleting = false;
+        (function tick() {
+          const current = roles[roleIndex];
+          if (!deleting) {
+            charIndex++;
+            contentEl.textContent = current.slice(0, charIndex);
+            if (charIndex === current.length) { deleting = true; setTimeout(tick, 1700); return; }
+            setTimeout(tick, 55);
+          } else {
+            charIndex--;
+            contentEl.textContent = current.slice(0, charIndex);
+            if (charIndex === 0) { deleting = false; roleIndex = (roleIndex + 1) % roles.length; setTimeout(tick, 350); return; }
+            setTimeout(tick, 28);
+          }
+        })();
+      }
+    }
+
+    // --- 4c. 3D tilt + cursor-spotlight card engine ---
+    function initTiltSpotlight(selector, withTilt) {
+      document.querySelectorAll(selector).forEach(card => {
+        card.classList.add(withTilt ? 'tilt-card' : 'spotlight-card');
+        card.addEventListener('pointerenter', () => card.classList.remove('tilt-reset'));
+        card.addEventListener('pointermove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left, y = e.clientY - rect.top;
+          card.style.background = `radial-gradient(520px circle at ${x}px ${y}px, rgba(255,30,30,0.13), transparent 45%), #0e0e0e`;
+          if (withTilt) {
+            const cx = x / rect.width - 0.5, cy = y / rect.height - 0.5;
+            card.style.transform = `perspective(900px) rotateX(${(-cy * 9).toFixed(2)}deg) rotateY(${(cx * 9).toFixed(2)}deg) translateY(-4px)`;
+          }
+        });
+        card.addEventListener('pointerleave', () => {
+          card.classList.add('tilt-reset');
+          card.style.background = '#0e0e0e';
+          if (withTilt) card.style.transform = 'none';
+          setTimeout(() => card.classList.remove('tilt-reset'), 650);
+        });
+      });
+    }
+    if (enableHeavyFX) {
+      initTiltSpotlight('.service-card, .skills-card, .specialty-card', true);
+      initTiltSpotlight('.edu-card, .exp-card, .contact-info-card', false);
+    }
+
+    // --- 4d. Animated skill bars (fill on scroll into view) ---
+    const skillObserver = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.querySelectorAll('.progress span').forEach(bar => {
+            if (!bar.dataset.target) bar.dataset.target = bar.style.width || '0%';
+            bar.style.width = bar.dataset.target;
+          });
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.skills-card').forEach(card => skillObserver.observe(card));
+
+    // --- 4e. Hero particle network — literal node/link visualization ---
+    function initNetworkCanvas() {
+      const canvas = document.getElementById('network-canvas');
+      const heroSection = canvas ? canvas.closest('.hero') : null;
+      if (!canvas || !heroSection) return;
+      const ctx = canvas.getContext('2d');
+      let width, height;
+      const COUNT = window.innerWidth < 900 ? 36 : 68;
+      const LINK_DIST = 150;
+      let mx = -9999, my = -9999;
+
+      function resize() {
+        width = canvas.width = heroSection.offsetWidth;
+        height = canvas.height = heroSection.offsetHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      const rand = (a, b) => Math.random() * (b - a) + a;
+      const particles = Array.from({ length: COUNT }, () => ({
+        x: rand(0, width), y: rand(0, height),
+        vx: rand(-0.18, 0.18), vy: rand(-0.18, 0.18),
+        r: rand(1.2, 2.4)
+      }));
+      let pulses = [];
+
+      heroSection.addEventListener('mousemove', (e) => {
+        const rect = heroSection.getBoundingClientRect();
+        mx = e.clientX - rect.left; my = e.clientY - rect.top;
+      });
+      heroSection.addEventListener('mouseleave', () => { mx = -9999; my = -9999; });
+
+      function draw() {
+        ctx.clearRect(0, 0, width, height);
+        const links = [];
+
+        particles.forEach(p => {
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0 || p.x > width) p.vx *= -1;
+          if (p.y < 0 || p.y > height) p.vy *= -1;
+          const dx = p.x - mx, dy = p.y - my;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 110 && dist > 0.01) {
+            const f = (110 - dist) / 110;
+            p.x += (dx / dist) * f * 1.1;
+            p.y += (dy / dist) * f * 1.1;
+          }
+        });
+
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < LINK_DIST) {
+              const op = (1 - dist / LINK_DIST) * 0.4;
+              ctx.strokeStyle = `rgba(255,30,30,${op})`;
+              ctx.lineWidth = 0.6;
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+              links.push({ a: particles[i], b: particles[j] });
+            }
+          }
+        }
+
+        if (links.length && pulses.length < 6 && Math.random() < 0.02) {
+          pulses.push({ ...links[Math.floor(Math.random() * links.length)], t: 0 });
+        }
+        pulses.forEach(p => { p.t += 0.016; });
+        pulses = pulses.filter(p => p.t <= 1);
+        pulses.forEach(p => {
+          const x = p.a.x + (p.b.x - p.a.x) * p.t, y = p.a.y + (p.b.y - p.a.y) * p.t;
+          ctx.beginPath();
+          ctx.arc(x, y, 2.2, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.shadowColor = '#ff1e1e';
+          ctx.shadowBlur = 8;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        });
+
+        particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(255,60,60,0.85)';
+          ctx.fill();
+        });
+
+        requestAnimationFrame(draw);
+      }
+      draw();
+    }
+    if (enableHeavyFX) {
+      initNetworkCanvas();
+    } else {
+      const c = document.getElementById('network-canvas');
+      if (c) c.style.display = 'none';
     }
   </script>
