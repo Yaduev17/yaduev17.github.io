@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://yaduev.online/seo/sitemap.xml
